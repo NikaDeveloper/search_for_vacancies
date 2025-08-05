@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "search-for-vacancies"
 version = "0.1.0"
-description = ""
+description = "Программа для поиска и фильтрации вакансий с HeadHunter"
 authors = ["Nika Alexandrovna <megrelynika@gmail.com>"]
 readme = "README.md"
 
