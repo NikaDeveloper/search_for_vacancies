@@ -1,8 +1,11 @@
 from typing import List
+
 from src.models.vacancy import Vacancy
 
 
-def filter_vacancies(vacancies: List[Vacancy], filter_words: List[str]) -> List[Vacancy]:
+def filter_vacancies(
+    vacancies: List[Vacancy], filter_words: List[str]
+) -> List[Vacancy]:
     """
     Фильтрация вакансий по ключевым словам.
 
@@ -22,7 +25,9 @@ def filter_vacancies(vacancies: List[Vacancy], filter_words: List[str]) -> List[
     return filtered
 
 
-def get_vacancies_by_salary(vacancies: List[Vacancy], salary_range: str) -> List[Vacancy]:
+def get_vacancies_by_salary(
+    vacancies: List[Vacancy], salary_range: str
+) -> List[Vacancy]:
     """
     Фильтрация вакансий по диапазону зарплат.
     Теперь учитывает как минимальную, так и максимальную зарплату.
@@ -42,15 +47,16 @@ def get_vacancies_by_salary(vacancies: List[Vacancy], salary_range: str) -> List
             continue
 
         # Если валюта не указана или не RUR/RUB - пропускаем
-        if vacancy.currency and vacancy.currency.lower() not in ['rur', 'rub']:
+        if vacancy.currency and vacancy.currency.lower() not in ["rur", "rub"]:
             continue
 
         # Проверяем, попадает ли зарплата в диапазон
         salary_from = vacancy.salary_from or 0
-        salary_to = vacancy.salary_to or float('inf')
+        salary_to = vacancy.salary_to or float("inf")
 
-        if (salary_from >= min_salary or salary_to >= min_salary) and \
-                (salary_from <= max_salary or salary_to <= max_salary):
+        if (salary_from >= min_salary or salary_to >= min_salary) and (
+            salary_from <= max_salary or salary_to <= max_salary
+        ):
             filtered.append(vacancy)
 
     return filtered
@@ -59,9 +65,7 @@ def get_vacancies_by_salary(vacancies: List[Vacancy], salary_range: str) -> List
 def sort_vacancies(vacancies: List[Vacancy]) -> List[Vacancy]:
     """Сортировка вакансий по зарплате (от большей к меньшей)."""
     return sorted(
-        vacancies,
-        key=lambda x: (x.salary_from or 0, x.salary_to or 0),
-        reverse=True
+        vacancies, key=lambda x: (x.salary_from or 0, x.salary_to or 0), reverse=True
     )
 
 

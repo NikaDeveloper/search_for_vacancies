@@ -1,50 +1,45 @@
+import json
+from typing import Any, Dict, List, Union
+
 import requests
-from typing import List, Dict
+
 from src.api.abstract_api import AbstractAPI
 
 
 class HeadHunterAPI(AbstractAPI):
     """Класс для работы с API HeadHunter."""
 
-    _BASE_URL = "https://api.hh.ru/vacancies"
+    _BASE_URL: str = "https://api.hh.ru/vacancies"
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Автоматически проверяет подключение при инициализации."""
         self._connect_to_api()
 
     def _connect_to_api(self) -> None:
-        """Подключение к API HeadHunter с проверкой доступности."""
+        """Приватный метод для проверки подключения к API."""
         try:
-            response = requests.get(self._BASE_URL, params={"text": "test", "per_page": 1})
+            params: Dict[str, Union[str, int]] = {"text": "test", "per_page": 1}
+            response = requests.get(self._BASE_URL, params=params, timeout=5)
             response.raise_for_status()
         except requests.RequestException as e:
-            raise ConnectionError(f"Ошибка подключения к API HeadHunter: {e}")
+            print(f"Ошибка подключения к API: {e}")
 
-    def get_vacancies(self, search_query: str, per_page: int = 100) -> List[Dict]:
-        """
-        Получение вакансий с HeadHunter по ключевому слову.
-
-        :param search_query: Ключевое слово для поиска
-        :param per_page: Количество вакансий
-        :return: Список вакансий
-        """
-        params = {
-            "text": search_query,
-            "per_page": per_page,
+    def get_vacancies(
+        self, search_query: str, per_page: int = 100
+    ) -> List[Dict[str, Any]]:
+        """Основной метод для получения вакансий."""
+        params: Dict[str, Union[str, int, bool]] = {
+            "text": str(search_query),
+            "per_page": int(per_page),
             "area": 113,  # Россия
-            "only_with_salary": True,  # Только вакансии с указанной зарплатой
-            "search_field": "name"  # Ищем в названии вакансии
+            "only_with_salary": True,
         }
-
         try:
-            response = requests.get(self._BASE_URL, params=params)
+            response = requests.get(
+                self._BASE_URL, params=params, timeout=10  # type: ignore[arg-type]
+            )
             response.raise_for_status()
-            data = response.json()
-
-            # Добавляем логирование для отладки
-            print(f"Найдено вакансий: {data.get('found', 0)}")
-            print(f"Запрошено вакансий: {per_page}")
-
-            return data.get("items", [])
-        except requests.RequestException as e:
+            return response.json().get("items", [])
+        except (requests.RequestException, json.JSONDecodeError) as e:
             print(f"Ошибка при получении вакансий: {e}")
             return []

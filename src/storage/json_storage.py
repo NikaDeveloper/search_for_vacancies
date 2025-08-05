@@ -1,6 +1,7 @@
 import json
-from typing import List, Dict, Optional
 from pathlib import Path
+from typing import Dict, List, Optional
+
 from src.models.vacancy import Vacancy
 from src.storage.abstract_storage import AbstractStorage
 
@@ -51,11 +52,11 @@ class JSONStorage(AbstractStorage):
             "salary_to": vacancy.salary_to,
             "currency": vacancy.currency,
             "description": vacancy.description,
-            "requirements": vacancy.requirements
+            "requirements": vacancy.requirements,
         }
 
         # Проверяем дубликаты по URL (так как он уникален для каждой вакансии)
-        if not any(v['url'] == vacancy_dict['url'] for v in vacancies):
+        if not any(v["url"] == vacancy_dict["url"] for v in vacancies):
             vacancies.append(vacancy_dict)
             self._write_vacancies(vacancies)
 
@@ -72,13 +73,13 @@ class JSONStorage(AbstractStorage):
         for vacancy_data in vacancies_data:
             try:
                 vacancy = Vacancy(
-                    title=vacancy_data.get("title"),
-                    url=vacancy_data.get("url"),
+                    title=str(vacancy_data.get("title", "")),
+                    url=str(vacancy_data.get("url", "")),
                     salary_from=vacancy_data.get("salary_from"),
                     salary_to=vacancy_data.get("salary_to"),
                     currency=vacancy_data.get("currency"),
                     description=vacancy_data.get("description"),
-                    requirements=vacancy_data.get("requirements")
+                    requirements=vacancy_data.get("requirements"),
                 )
 
                 if not criteria or self._vacancy_matches_criteria(vacancy, criteria):
@@ -92,9 +93,11 @@ class JSONStorage(AbstractStorage):
         """Проверяет, соответствует ли вакансия критериям."""
         for key, value in criteria.items():
             if key == "keyword":
-                if not (value.lower() in (vacancy.description or "").lower() or
-                        value.lower() in (vacancy.requirements or "").lower() or
-                        value.lower() in vacancy.title.lower()):
+                if not (
+                    value.lower() in (vacancy.description or "").lower()
+                    or value.lower() in (vacancy.requirements or "").lower()
+                    or value.lower() in vacancy.title.lower()
+                ):
                     return False
             elif key == "salary_from":
                 if not vacancy.salary_from or vacancy.salary_from < value:
@@ -115,7 +118,7 @@ class JSONStorage(AbstractStorage):
             "salary_to": vacancy.salary_to,
             "currency": vacancy.currency,
             "description": vacancy.description,
-            "requirements": vacancy.requirements
+            "requirements": vacancy.requirements,
         }
 
         if vacancy_dict in vacancies:
