@@ -1,20 +1,21 @@
 [tool.poetry]
 name = "search-for-vacancies"
 version = "0.1.0"
-description = ""
+description = "Программа для поиска и фильтрации вакансий с HeadHunter"
 authors = ["Nika Alexandrovna <megrelynika@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.13"
 requests = "^2.32.4"
-black = "^25.1.0"
-mypy = "^1.17.1"
-isort = "^6.0.1"
-flake8 = "^7.3.0"
-pytest = "^8.4.1"
-poetry-core = "^2.1.3"
 
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+flake8 = "^7.3.0"
+isort = "^6.0.1"
+mypy = "^1.16.1"
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
 
 [build-system]
 requires = ["poetry-core"]
